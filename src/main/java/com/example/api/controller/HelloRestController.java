@@ -1,4 +1,4 @@
-package com.example.api.springbootappnotice;
+package com.example.api.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloRestController {
     @RequestMapping("/")
-    public String index() {
+    public String index1() {
         return "helloworld!";
     }
 }

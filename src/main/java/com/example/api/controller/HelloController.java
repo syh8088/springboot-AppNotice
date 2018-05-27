@@ -12,7 +12,7 @@ public class HelloController {
     private BlogDao blogDao;
 
     @RequestMapping("/index")
-    public String index() {
+    public String index2() {
         blogDao.insertNewContent("Hello Spring?");
         return "Greetings from Spring Boot!";
     }

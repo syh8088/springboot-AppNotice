@@ -1,5 +1,6 @@
 package com.example.api.service;
 
+import com.example.api.entities.Game;
 import com.example.api.exception.Ensure;
 import com.example.api.exception.NamedException;
 import lombok.extern.slf4j.Slf4j;

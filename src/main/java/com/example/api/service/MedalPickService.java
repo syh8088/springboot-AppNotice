@@ -4,6 +4,7 @@ import com.example.api.entities.Game;
 import com.example.api.exception.Ensure;
 import com.example.api.exception.NamedException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,19 +1,28 @@
 package com.example.api.service;
 
+import com.example.api.config.converter.TimeConverter;
+import com.example.api.dto.GameBaseDto;
+import com.example.api.dto.GameTeamDto;
 import com.example.api.entities.Game;
 import com.example.api.exception.Ensure;
 import com.example.api.exception.NamedException;
+import com.example.api.repositories.GameRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class MedalPickService {
 
-    public  void getGames(String startDateTime, long sportsId, Long[] exceptGameIds, String leagueName, String homeTeamName, String awayTeamName) throws Exception {
+    @Autowired
+    private GameRepository gameRepository;
+
+    public void getGames(String startDateTime, long sportsId, Long[] exceptGameIds, String leagueName, String homeTeamName, String awayTeamName) throws Exception {
 
         Ensure.ifThenThrow(startDateTime == null,
                 () -> new NamedException("StartDateTimeIsNullError", "날짜 데이타가 잘못되었습니다."));
@@ -50,6 +59,14 @@ public class MedalPickService {
                 exceptGameIds,
                 TimeConverter.convertStartDateToLocalDateTime(exceptDashStartDateTime.substring(0, 8)),
                 TimeConverter.convertEndDateToLocalDateTime(exceptDashStartDateTime.substring(0, 8)));
+
+
+
+
+        //TODO:해당 경기의 GameTeam정보를 add한다.
+        List<GameBaseDto<GameTeamDto>> gameBaseDtos = new ArrayList<>();
+
+
     }
 
 

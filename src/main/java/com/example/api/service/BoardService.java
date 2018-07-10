@@ -2,6 +2,7 @@ package com.example.api.service;
 
 import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
+import com.example.api.exception.NamedException;
 import com.example.api.repositories.AppNoticeDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,6 +42,20 @@ public class BoardService {
         System.out.println(noticeList);
         return noticeList;
     }
+
+
+    /**
+     * 댓글을 포함한 게시물 정보를 반환한다.
+     *
+     * @param boardId         게시판 ID (ex:free)
+     * @param postId          게시글 ID (ex: 3885921)
+     * @param commentPageSize 페이징크기
+     * @return 댓글이 포함된 게시물 정보
+     */
+    public PostAndCommentList getPostAndCommentList(String boardId, int postId, Integer commentPageSize) throws NamedException {
+
+    }
+
 
 
 }

@@ -3,14 +3,12 @@ package com.example.api.controller;
 import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
 import com.example.api.service.BoardService;
+import com.example.api.validator.BoardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BoardController {
@@ -41,6 +39,27 @@ public class BoardController {
         return new ResponseEntity<>(boardService.getAppNoticeList(deviceType, category, pageRequest, popup), HttpStatus.OK);
 
     }
+
+    /* 게시판 조회 */
+    @RequestMapping(value = "/{boradId}/posts/{postId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getPostAndCommentList(
+        @PathVariable("boardId") String boardId,
+        @PathVariable("postId") int postId,
+        @RequestParam(required = false) Integer commentPageSize
+    ) throws Exception {
+
+        BoardValidator.validateBoardIdNotEmpty(boardId);
+        BoardValidator.validatePostIdNotEmpty(postId);
+
+
+
+
+
+
+    }
+
+
+
 
 
 }

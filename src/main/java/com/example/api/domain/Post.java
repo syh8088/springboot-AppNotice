@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import org.springframework.util.StringUtils;
 
 @NoArgsConstructor
 @Setter
@@ -226,11 +227,14 @@ public class Post extends Paginator {
     @Getter
     @JsonIgnore
     private int searchMaxId;
-    @Getter
-    private Writer user;
-    @Getter
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private MedalPick medalPick;
+
+   // @Getter
+   // private Writer user;
+
+   // @Getter
+   // @JsonInclude(JsonInclude.Include.NON_NULL)
+   // private MedalPick medalPick;
+
     @Getter
     @JsonIgnore
     private int referId;  // refer_id

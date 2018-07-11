@@ -13,13 +13,16 @@ import org.apache.ibatis.session.SqlSession;
 @NoArgsConstructor
 @Slf4j
 public class BoardDAO {
+
+    private static final String DOMAIN = "board.";
+
     @Autowired
     @Qualifier("sessionNDB")
     private SqlSession sqlSession;
 
 
     public Integer getParentPostIdByTargetId(Post post) {
-        return sqlSession.selectOne()
+        return sqlSession.selectOne(DOMAIN + "selectParentPostIdByTargetId", post);
     }
 
 

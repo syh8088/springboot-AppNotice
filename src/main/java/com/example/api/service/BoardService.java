@@ -1,5 +1,6 @@
 package com.example.api.service;
 
+import com.example.api.dao.BoardDAO;
 import com.example.api.domain.Post;
 import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BoardService {
+
+    @Autowired
+    private BoardDAO boardDAO;
 
     @Autowired
     private AppNoticeDeviceRepository appNoticeDeviceRepository;
@@ -59,9 +63,23 @@ public class BoardService {
         params.setId(postId);
         params.setPageSize(commentPageSize);
 
+        Integer id = boardDAO.getParentPostIdByTargetId(params);
+
+        // postId가 commnentID로 들어왔을 경우 parentID를 반환한다. PC/Mobile 불일치문제
+        params.setId(boardDAO.getParentPostIdByTargetId(params));
 
 
     }
+
+    /**
+     * 댓글을 포함한 게시물 정보를 반환한다.
+     *
+     * @param params 조회할 파라메터 (ex: boardId=free, id=3885921)
+     * @return 댓글이 포함된 게시물 정보
+     */
+    public PostAndCommentList getPostAndCommentList(Post)
+
+
 
 
 

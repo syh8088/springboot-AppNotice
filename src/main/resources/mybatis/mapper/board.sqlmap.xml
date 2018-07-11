@@ -3,6 +3,6 @@
 
 <mapper namespace="board">
     <select id="selectParentPostIdByTargetId" parameterType="com.example.api.domain.Post" resultType="int">
-      SELECT IF(wr_is_comment=0, wr_id, wr_parent)
+      SELECT IF(wr_is_comment=0, wr_id, wr_parent) FROM g4_write_${boardId} WHERE wr_id = #{id}
     </select>
 </mapper>

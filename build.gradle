@@ -47,4 +47,7 @@ dependencies {
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
+
+
+    //compile group: 'com.googlecode.xmemcached', name: 'xmemcached', version: '2.2.0'
 }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="meta">
+
+    <resultMap type="com.example.api.domain.BoardMeta" id="boardMetaMap">
+        <result property="boardId" column="bo_table"/>
+        <result property="groupId" column="gr_id"/>
+        <result property="description" column="bo_subject"/>
+        <result property="shortDescription" column="bo_short"/>
+        <result property="adminUserId" column="bo_admin"/>
+        <result property="chatLevelToReadList" column="bo_list_level"/>
+        <result property="chatLevelToReadPost" column="bo_read_level"/>
+        <result property="chatLevelToWritePost" column="bo_write_level"/>
+        <result property="chatLevelToReplyPost" column="bo_reply_level"/>
+        <result property="chatLevelToCommentPost" column="bo_comment_level"/>
+        <result property="chatLevelToAttachPost" column="bo_upload_level"/>
+        <result property="chatLevelToTrackbackPost" column="bo_trackback_level"/>
+        <result property="deletedCount" column="bo_count_delete"/>
+        <result property="modifiedCount" column="bo_count_modify"/>
+        <result property="readPoint" column="bo_read_point"/>
+        <result property="writePoint" column="bo_write_point"/>
+        <result property="writeExp" column="bo_write_exp"/>
+        <result property="commentPoint" column="bo_comment_point"/>
+        <result property="commentSecondPoint" column="bo_comment2_point"/>
+        <result property="recommendPoint" column="bo_recommend_point"/>
+        <result property="useCategory" column="bo_use_category"/>
+        <result property="categoryListString" column="bo_category_list"/>
+        <result property="disableTags" column="bo_disable_tags"/>
+        <result property="useSideview" column="bo_use_sideview"/>
+        <result property="useFileContent" column="bo_use_file_content"/>
+        <result property="useSecret" column="bo_use_secret"/>
+        <result property="useDhtmlEditor" column="bo_use_dhtml_editor"/>
+        <result property="useRssView" column="bo_use_rss_view"/>
+        <result property="useLike" column="bo_use_good"/>
+        <result property="useDislike" column="bo_use_nogood"/>
+        <result property="useName" column="bo_use_name"/>
+        <result property="useSignature" column="bo_use_signature"/>
+        <result property="useTrackback" column="bo_use_trackback"/>
+        <result property="useListView" column="bo_use_list_view"/>
+        <result property="rowsPerPage" column="bo_page_rows"/>
+        <result property="maxHourToNewPost" column="bo_new"/>
+        <result property="hitCountToBePopularPost" column="bo_hot"/>
+        <result property="likeCountToBePopularPost" column="bo_hot_recommend"/>
+        <result property="listStyle" column="bo_list_style"/>
+        <result property="skin" column="bo_skin"/>
+        <result property="latestSkin" column="bo_latest_skin"/>
+        <result property="latestType" column="bo_latest_type"/>
+        <result property="latestDays" column="bo_latest_days"/>
+        <result property="includeHead" column="bo_include_head"/>
+        <result property="includeTail" column="bo_include_tail"/>
+        <result property="maxAttachmentSize" column="bo_upload_size"/>
+        <result property="maxAttachmentCount" column="bo_upload_count"/>
+        <result property="replyOrder" column="bo_reply_order"/>
+        <result property="useSearch" column="bo_use_search"/>
+        <result property="orderSearch" column="bo_order_search"/>
+        <result property="totalPostCount" column="bo_count_write"/>
+        <result property="totalCommentCount" column="bo_count_comment"/>
+        <result property="writeMin" column="bo_write_min"/>
+        <result property="writeMax" column="bo_write_max"/>
+        <result property="noticePostListString" column="bo_notice"/>
+        <result property="minCommentCount" column="bo_comment_min"/>
+        <result property="maxCommentCount" column="bo_comment_max"/>
+        <result property="orderBy" column="bo_sort_field"/>
+        <result property="prisonerWrite" column="bo_prisoner_write"/>
+        <result property="prisonerRead" column="bo_prisoner_read"/>
+        <result property="prisonerComment" column="bo_prisoner_comment"/>
+        <result property="limitWrite" column="bo_limit_write"/>
+        <result property="maxCommentLength" column="bo_max_strlen_comment"/>
+        <result property="isAdult" column="bo_is_adult"/>
+        <result property="isAnonymous" column="bo_is_anonymous"/>
+        <result property="editorPlugin" column="bo_editor_plugin"/>
+        <result property="sphinxDocStart" column="sphinx_doc_start"/>
+        <result property="commentableAndVisibleInAdminPostMethod" column="bo_comment_allowed"/>
+        <result property="commentableAdminPostListString" column="bo_comment_allowed_list"/>
+        <result property="visibleNameCard" column="bo_show_namecard"/>
+        <result property="visibleAd" column="bo_show_ad"/>
+        <result property="isPrivate" column="bo_is_private"/>
+        <result property="isAuthRequiredToPost" column="bo_is_write_auth"/>
+        <result property="isAuthRequiredToComment" column="bo_is_comment_auth"/>
+        <result property="commentAllowedType" column="bo_comment_allowed"/>
+        <result property="commentAllowedIds" column="bo_comment_allowed_list"/>
+        <result property="simpleNotice" column="bo_simple_notice"/>
+        <result property="mainPostListString" column="bo_main_post"/>
+    </resultMap>
+
+    <select id="selectBoardMetaList" parameterType="com.named.api.domain.BoardMeta" resultMap="boardMetaMap">
+        SELECT bo_table, gr_id, bo_subject, bo_short, bo_admin, bo_list_level, bo_read_level, bo_write_level,
+        bo_reply_level, bo_comment_level, bo_upload_level, bo_trackback_level, bo_count_delete, bo_count_modify,
+        bo_read_point, bo_write_point, bo_write_exp, bo_comment_point, bo_comment2_point, bo_recommend_point, bo_use_category,
+        bo_category_list, bo_disable_tags, bo_use_sideview, bo_use_file_content, bo_use_secret, bo_use_dhtml_editor,
+        bo_use_rss_view, bo_use_good, bo_use_nogood, bo_use_name, bo_use_signature, bo_use_trackback, bo_use_list_view,
+        bo_page_rows, bo_new, bo_hot, bo_hot_recommend, bo_list_style, bo_skin, bo_latest_skin, bo_latest_type,
+        bo_latest_days,
+        bo_include_head, bo_include_tail, bo_upload_size, bo_upload_count, bo_reply_order, bo_use_search,
+        bo_order_search, bo_count_write, bo_count_comment, bo_write_min, bo_write_max, bo_notice, bo_comment_min,
+        bo_comment_max, bo_sort_field,
+        bo_prisoner_write,
+        bo_prisoner_read,
+        bo_prisoner_comment,
+        bo_limit_write, bo_comment_allowed, bo_comment_allowed_list,
+        bo_max_strlen_comment, bo_is_adult, bo_is_anonymous, bo_editor_plugin, sphinx_doc_start, bo_comment_allowed,
+        bo_comment_allowed_list, bo_show_namecard, bo_show_ad, bo_is_private, bo_is_write_auth, bo_is_comment_auth,
+        bo_simple_notice, bo_main_post
+        FROM g4_board
+        <where>
+            <if test="boardId != null">
+                bo_table = #{boardId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

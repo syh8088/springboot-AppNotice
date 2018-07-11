@@ -1,5 +1,6 @@
 package com.example.api.service;
 
+import com.example.api.domain.Post;
 import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
 import com.example.api.exception.NamedException;
@@ -53,6 +54,12 @@ public class BoardService {
      * @return 댓글이 포함된 게시물 정보
      */
     public PostAndCommentList getPostAndCommentList(String boardId, int postId, Integer commentPageSize) throws NamedException {
+        Post params = new Post();
+        params.setBoardId(boardId);
+        params.setId(postId);
+        params.setPageSize(commentPageSize);
+
+
 
     }
 

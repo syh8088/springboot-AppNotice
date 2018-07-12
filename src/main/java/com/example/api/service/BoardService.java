@@ -2,6 +2,8 @@ package com.example.api.service;
 
 import com.example.api.dao.BoardDAO;
 import com.example.api.dao.MetaDAO;
+import com.example.api.domain.BoardMeta;
+import com.example.api.domain.Comment;
 import com.example.api.domain.Post;
 import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
@@ -82,8 +84,12 @@ public class BoardService {
      * @return 댓글이 포함된 게시물 정보
      */
     public PostAndCommentList getPostAndCommentList(Post params) throws NamedException {
+        BoardMeta boardMeta = metaDAO.getBoardMeta(params.getBoardId());
 
-
+        Comment comment = new Comment();
+        comment.setBoardId(params.getBoardId());
+        comment.setPostId(params.getId());
+        if(params.getPag)
 
     }
 

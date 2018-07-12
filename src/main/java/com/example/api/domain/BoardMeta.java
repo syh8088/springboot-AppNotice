@@ -320,6 +320,7 @@ public class BoardMeta extends Paginator {
         return this.commentAllowedIds.split("\n");
     }
 
+/*
     public String[] getMainPostArray(String category) {
         if (StringUtils.isEmpty(category)) return new String[0];
         try {
@@ -329,6 +330,7 @@ public class BoardMeta extends Paginator {
             return new String[0];
         }
     }
+*/
 
     /**
      * 댓글 타입을 정의한다.

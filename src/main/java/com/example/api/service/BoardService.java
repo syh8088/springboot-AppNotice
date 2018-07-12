@@ -1,5 +1,6 @@
 package com.example.api.service;
 
+import com.example.api.constant.Constants;
 import com.example.api.dao.BoardDAO;
 import com.example.api.dao.MetaDAO;
 import com.example.api.domain.BoardMeta;
@@ -9,6 +10,7 @@ import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
 import com.example.api.exception.NamedException;
 import com.example.api.repositories.AppNoticeDeviceRepository;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -89,7 +91,26 @@ public class BoardService {
         Comment comment = new Comment();
         comment.setBoardId(params.getBoardId());
         comment.setPostId(params.getId());
-        if(params.getPag)
+        if(params.getPageSize() > 1) {
+            comment.setPageNo(1);
+            comment.setPageSize(params.getPageSize());
+        }
+
+        params.setPageSize(null);
+        if(!ArrayUtils.contains(Constants.BOARD_ID_ARRAY_NOT_CONTAINS_BEST, params.getBoardId())) {
+            params.setHasBest(true);
+        }
+
+        if(!ArrayUtils.contains(Constants.BOARD_ID_ARRAY_NOT_CONTAINS_PHOTO, params.getBoardId())) {
+            params.setHasPhoto(true);
+        }
+
+        if(!ArrayUtils.contains(Constants.BOARD_ID_ARRAY_CONTAINS_POINT, params.getBoardId())) {
+            params.setPointPost(true);
+        }
+
+        Post post = boardMeta.getPost(params);
+
 
     }
 

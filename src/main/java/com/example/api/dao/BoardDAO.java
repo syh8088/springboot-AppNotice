@@ -1,9 +1,11 @@
 package com.example.api.dao;
 
+import com.example.api.constant.Constants;
 import com.example.api.domain.BoardMeta;
 import com.example.api.domain.Post;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -53,6 +55,36 @@ public class BoardDAO {
     public List<BoardMeta> getBoardMetaList(BoardMeta boardMeta) {
         return sqlSession.selectList(DOMAIN + "selectBoardMetaList", boardMeta);
     }
+
+    /**
+     * 게시물 정보를 조회한다.
+     *
+     * @param params 조회할 파라메터 (ex: boardId=free, id=392523)
+     * @return 게시물 정보
+     */
+    public Post getPost(Post params) {
+
+        if (!ArrayUtils.contains(Constants.BOARD_ID_ARRAY_NOT_CONTAINS_BEST, params.getBoardId())) {
+            params.setHasBest(true);
+        }
+        if (!ArrayUtils.contains(Constants.BOARD_ID_ARRAY_NOT_CONTAINS_PHOTO, params.getBoardId())) {
+            params.setHasPhoto(true);
+        }
+
+        if (ArrayUtils.contains(Constants.BOARD_ID_ARRAY_CONTAINS_POINT, params.getBoardId())) {
+            params.setPointPost(true);
+        }
+        if (ArrayUtils.contains(Constants.BOARD_ID_ARRAY_CONTAINS_BET_STRENGTH, params.getBoardId())) {
+            params.setProtoPost(true);
+        }
+
+        List<Post> postList = sqlSession.selectList(DOMAIN + "selectPost", params);
+        if (postList.isEmpty()) {
+            return null;
+        }
+
+    }
+
 
 
 }

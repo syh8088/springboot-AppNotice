@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @NoArgsConstructor
 @Slf4j
@@ -25,7 +27,25 @@ public class MetaDAO {
      * @return BoardMeta
      */
     public BoardMeta getBoardMeta(String boardId) {
-        BpardMeta params = new BoardMeta();
+        BoardMeta params = new BoardMeta();
+        params.setBoardId(boardId);
+        List<BoardMeta> boardMetaList = getBoardMetaList(params);
+        if (boardMetaList.isEmpty()) {
+            return null;
+        }
+
+        return boardMetaList.get(0);
+    }
+
+    /**
+     * 게시판 메타 정보 목록을 조회한다. (neolive.g4_board)
+     *
+     * @param boardMeta
+     * @return 게시판 메타 정보 목록
+     */
+    public List<BoardMeta> getBoardMetaList(BoardMeta boardMeta) {
+
+        return sqlSession.selectList(DOMAIN + "selectBoardMetaList", boardMeta);
     }
 
 }

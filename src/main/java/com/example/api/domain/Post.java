@@ -21,7 +21,7 @@ public class Post extends Paginator {
     /**
      * 게시판 카테고리를 정의한다. (post.boardId)
      */
-    public enum BoardId {
+  /*  public enum BoardId {
 
         @SuppressWarnings("SpellCheckingInspection")
         MEDAL_PICK("medalpick"), // v1
@@ -37,7 +37,7 @@ public class Post extends Paginator {
 
             return value;
         }
-    }
+    }*/
 
     // 게시판 ID
     @Getter

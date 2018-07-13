@@ -28,8 +28,8 @@ public class MedalPickService {
                 () -> new NamedException("StartDateTimeIsNullError", "날짜 데이타가 잘못되었습니다."));
 
         String exceptDashStartDateTime = startDateTime.replace("-", "");
-        log.info("exceptDashStartDateTime.substring={}", exceptDashStartDateTime.substring(0, 8));
-        log.info("exceptDashStartDateTime={},length={}", exceptDashStartDateTime, startDateTime.length());
+        //log.info("exceptDashStartDateTime.substring={}", exceptDashStartDateTime.substring(0, 8));
+        //log.info("exceptDashStartDateTime={},length={}", exceptDashStartDateTime, startDateTime.length());
         Ensure.ifThenThrow(exceptDashStartDateTime.length() != 17,
                 () -> new NamedException("InvalidGameError", "날짜 형식이 잘못되었습니다."));
 

@@ -11,4 +11,5 @@ public class Constants {
     public static String[] BOARD_ID_ARRAY_NOT_CONTAINS_PHOTO = {"faq", "req", "garbage"};
     public static String[] BOARD_ID_ARRAY_CONTAINS_POINT = {"npoint"};
     public static String[] BOARD_ID_ARRAY_CONTAINS_BET_STRENGTH = {"proto"};
+    public static String[] BEST_BOARD_ID_ARRAY = {"free", "humor", "photo", "community"};
 }

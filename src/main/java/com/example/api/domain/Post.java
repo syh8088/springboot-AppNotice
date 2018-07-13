@@ -228,8 +228,8 @@ public class Post extends Paginator {
     @JsonIgnore
     private int searchMaxId;
 
-   // @Getter
-   // private Writer user;
+    @Getter
+    private Writer user;
 
    // @Getter
    // @JsonInclude(JsonInclude.Include.NON_NULL)

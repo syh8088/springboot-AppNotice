@@ -2,7 +2,409 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="board">
+
+    <!-- 게시물 정보 -->
+    <resultMap type="com.example.api.domain.Post" id="postMap">
+        <!-- 게시판 ID -->
+        <result property="boardId" column="boardId"/>
+        <!-- 게시글 ID -->
+        <result property="id" column="wr_id"/>
+        <!-- 게시글 번호 -->
+        <result property="no" column="wr_num"/>
+        <!-- 카테고리 -->
+        <result property="category" column="ca_name"/>
+        <!-- 이미지 첨부 여부 -->
+        <result property="isPhotoInteger" column="is_photo"/>
+        <!-- 베스트 선정 여부 -->
+        <result property="isBestInteger" column="is_best"/>
+        <!-- 베스트 선정 일자 -->
+        <result property="bestDateTime" column="best_datetime"/>
+        <!-- 제목 -->
+        <result property="title" column="wr_subject"/>
+        <!-- 내용 -->
+        <result property="content" column="wr_content"/>
+        <!-- 댓글 수 -->
+        <result property="commentCount" column="wr_comment"/>
+        <!-- 나눔 포인트 -->
+        <result property="point" column="gift_point"/>
+        <!-- 나눔 포인트 진행/종료 상태 -->
+        <result property="pointStatus" column="status"/>
+        <!-- 채택된 총 댓글 수 -->
+        <result property="totalSelectedCommentCount" column="total_selected_comment_count"/>
+        <!-- 채택된 총 나눔 포인트 -->
+        <result property="totalSelectedPoint" column="total_selected_point"/>
+        <!-- 프로토 게시물 강승 레벨 -->
+        <result property="betStrength" column="bet_strength"/>
+        <!-- 작성일자 -->
+        <result property="createdDateTime" column="wr_datetime"/>
+        <!-- 조회 수 -->
+        <result property="hitCount" column="wr_hit"/>
+        <!-- 추천 수 -->
+        <result property="likeCount" column="wr_good"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="userNick" column="wr_name"/>
+        <result property="userId" column="mb_id"/>
+        <result property="ipAddress" column="wr_ip"/>
+        <result property="referId" column="refer_id"/>
+        <result property="device" column="wr_device"/>
+        <association property='user' resultMap='writerMap'/>
+    </resultMap>
+
     <select id="selectParentPostIdByTargetId" parameterType="com.example.api.domain.Post" resultType="int">
       SELECT IF(wr_is_comment=0, wr_id, wr_parent) FROM g4_write_${boardId} WHERE wr_id = #{id}
     </select>
+
+    <select id="selectPost" parameterType="com.example.api.domain.Post" resultMap="postMap">
+        SELECT #{boardId} as boardId, article.*
+        <if test="isPointPost">, article.gift_point, article.status, (SELECT COUNT(0) FROM g4_write_npoint WHERE
+            wr_parent = article.wr_id AND wr_is_comment = 1 AND is_choice = 1) AS total_selected_comment_count, (SELECT
+            IFNULL(SUM(gift_point), 0) FROM g4_write_npoint WHERE wr_parent = article.wr_id AND wr_is_comment = 1 AND
+            is_choice = 1) AS total_selected_point
+        </if>
+        <if test="isProtoPost">
+            , article.bet_strength
+        </if>
+        -- best 등록일시
+        , (SELECT regDateTime FROM bbs_best WHERE wr_id = article.wr_id and bo_table = #{boardId}) AS best_datetime
+        -- user association
+        , author.mb_id AS user_id
+        , author.mb_nick AS user_nick
+        , author.today_word AS user_today_word
+        , CASE WHEN admin.authName IS NOT NULL AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_admin
+        , CASE WHEN admin.authName = 'SuperAdmin' AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_super_admin
+        , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'M' THEN 1 ELSE 0 END AS is_user_male
+        , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'F' THEN 1 ELSE 0 END AS is_user_female
+        , CASE WHEN author.mb_released_date IS NOT NULL AND author.mb_released_date <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_prisoner
+        , (SELECT MAX(crime) FROM etc_penalty WHERE mb_id = author.mb_id) AS user_convict_count
+        , IF(author.mb_is_hacking = 'Y',1,0) AS is_user_hacked
+        , CASE WHEN length(author.mb_intercept_date) > 0 AND author.mb_intercept_date <![CDATA[ <= ]]> CURRENT_DATE() THEN 1 ELSE 0 END AS is_user_banned
+        , IF(author.mb_leave_date = '',0,1) AS is_user_canceled
+        , CASE WHEN itemtime.chat_color_red IS NOT NULL AND itemtime.chat_color_red <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_red
+        , CASE WHEN itemtime.chat_color_blue IS NOT NULL AND itemtime.chat_color_blue <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_blue
+        , CASE WHEN itemtime.chat_color_pink IS NOT NULL AND itemtime.chat_color_pink <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_pink
+        , IFNULL(author.mb_point,0) AS user_point
+        , IFNULL(author.mb_exp,0) AS user_exp
+        , IFNULL(author.GP_AMT,0) AS user_gp
+        , author.mb_datetime AS user_registration_datetime
+        , author.mb_online AS user_last_chat_login_datetime
+        , author.profile_image_path As user_profile_image_path
+        FROM (
+        SELECT wr_id, wr_num, ca_name,
+        <if test="hasBest">is_best,</if>
+        <if test="hasPhoto">is_photo,</if>
+        wr_subject, wr_content, wr_comment, mb_id AS mb_id, wr_name AS wr_name, wr_datetime,
+        wr_hit,wr_good, wr_ip
+        <if test="isPointPost">, gift_point, status</if>
+        <if test="isProtoPost">, bet_strength</if>
+        FROM g4_write_${boardId}
+        WHERE wr_id = #{id} and wr_is_comment = 0
+        ) article
+        LEFT OUTER JOIN g4_member author on (article.mb_id = author.mb_id)
+        LEFT OUTER JOIN manager_group admin on (article.mb_id = admin.mb_id)
+        LEFT OUTER JOIN g4_member_item itemtime on (article.mb_id = itemtime.mb_id)
+    </select>
+
+
+    <!-- 게시물 댓글 정보 -->
+    <resultMap type="com.example.api.domain.Comment" id="commentMap">
+        <result property="boardId" column="boardId"/>
+        <result property="id" column="wr_id"/>
+        <result property="no" column="wr_num"/>
+        <result property="boardId" column="boardId"/>
+        <result property="postId" column="wr_parent"/>
+        <result property="groupId" column="wr_comment"/>
+        <result property="depth" column="wr_comment_reply"/>
+        <result property="isDeletedString" column="ca_name"/>
+        <result property="content" column="wr_content"/>
+        <!-- 포인트 채택 여부, 포인트 게시물 댓글 전용 -->
+        <result property="isSelectedInteger" column="is_choice"/>
+        <!-- 채택된 포인트, 포인트 게시물 댓글 전용 -->
+        <result property="selectedPoint" column="gift_point"/>
+        <result property="createdDateTime" column="wr_datetime"/>
+        <result property="updatedDateTime" column="wr_last"/>
+        <result property="userId" column="mb_id"/>
+        <result property="userNick" column="wr_name"/>
+        <result property="ipAddress" column="wr_ip"/>
+        <result property="device" column="wr_device"/>
+        <result property="totalCount" column="total_count"/>
+        <association property='user' resultMap='writerMap'/>
+    </resultMap>
+
+    <!-- 댓글 목록을 조회한다. -->
+    <select id="selectCommentList" parameterType="com.example.api.domain.Comment" resultMap="commentMap">
+        <if test="countable">
+            SELECT COUNT(0) AS total_count
+            FROM g4_write_${boardId}
+            WHERE wr_parent = #{postId} AND wr_is_comment = 1 AND ca_name != '_REMOVE'
+        </if>
+        <if test="!countable">
+            SELECT #{boardId} as boardId, comment.*
+            <if test="isPointComment">, comment.is_choice, comment.gift_point</if>
+            -- user association
+            , user.mb_id AS user_id
+            , user.mb_nick AS user_nick
+            , user.today_word AS user_today_word
+            , CASE WHEN admin.authName IS NOT NULL AND user.mb_level = 10 THEN 1 ELSE 0 END AS is_user_admin
+            , CASE WHEN admin.authName = 'SuperAdmin' AND user.mb_level = 10 THEN 1 ELSE 0 END AS is_user_super_admin
+            , CASE WHEN user.mb_sex IS NOT NULL AND user.mb_sex = 'M' THEN 1 ELSE 0 END AS is_user_male
+            , CASE WHEN user.mb_sex IS NOT NULL AND user.mb_sex = 'F' THEN 1 ELSE 0 END AS is_user_female
+            , CASE WHEN user.mb_released_date IS NOT NULL AND user.mb_released_date <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_prisoner
+            , (SELECT MAX(crime) FROM etc_penalty WHERE mb_id = user.mb_id) AS user_convict_count
+            , IF(user.mb_is_hacking = 'Y',1,0) AS is_user_hacked
+            , CASE WHEN length(user.mb_intercept_date) > 0 AND user.mb_intercept_date <![CDATA[ <= ]]> CURRENT_DATE() THEN 1 ELSE 0 END AS is_user_banned
+            , IF(user.mb_leave_date = '',0,1) AS is_user_canceled
+            , CASE WHEN itemtime.chat_color_red IS NOT NULL AND itemtime.chat_color_red <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_red
+            , CASE WHEN itemtime.chat_color_blue IS NOT NULL AND itemtime.chat_color_blue <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_blue
+            , CASE WHEN itemtime.chat_color_pink IS NOT NULL AND itemtime.chat_color_pink <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_pink
+            , IFNULL(user.mb_point,0) AS user_point
+            , IFNULL(user.mb_exp,0) AS user_exp
+            , IFNULL(user.GP_AMT,0) AS user_gp
+            , user.mb_datetime AS user_registration_datetime
+            , user.mb_online AS user_last_chat_login_datetime
+            , user.profile_image_path As user_profile_image_path
+            FROM
+            (
+            SELECT wr_id, wr_num, wr_parent, wr_comment, wr_comment_reply, ca_name, wr_content, mb_id AS mb_id, wr_name AS wr_name,
+            wr_datetime, wr_last, wr_ip, wr_device
+            <if test="isPointComment">, is_choice, gift_point</if>
+            FROM g4_write_${boardId}
+            <where>
+                <!-- 댓글 더보기 기능 비활성화시 전체 출력 기준으로 댓글 목록을 반환한다. -->
+                <if test="lastCommentId == null">
+                    <if test="id != null">AND wr_id = #{id}</if>
+                    <if test="postId != null">AND wr_parent = #{postId}</if>
+                    <if test="groupId != null">AND wr_comment = #{groupId}</if>
+                    <if test="userId != null">AND mb_id = #{userId}</if>
+                    <!-- 포인트 채택 게시물 조회시 -->
+                    <if test="isSelectedInteger != null">AND is_choice = #{isSelectedInteger}</if>
+                    AND wr_is_comment = 1
+                </if>
+                <!-- 댓글 더보기 기능 활성화시 마지막 출력 댓글 ID 이후의 댓글 목록을 반환한다. -->
+                <if test="lastCommentId != null">
+                    AND wr_parent = #{postId} AND wr_is_comment = 1 AND ((wr_comment = #{groupId} AND wr_comment_reply >
+                    #{depth}) OR (wr_comment <![CDATA[ < ]]> #{groupId}))
+                </if>
+            </where>
+            ORDER BY wr_comment ${groupIdOrder}, wr_comment_reply ASC
+            <if test="limit != null and offset != null">
+                LIMIT #{limit}
+                <if test="lastCommentId == null">OFFSET #{offset}</if>
+            </if>
+            ) comment
+            LEFT OUTER JOIN g4_member user on (comment.mb_id = user.mb_id)
+            LEFT OUTER JOIN manager_group admin on (comment.mb_id = admin.mb_id)
+            LEFT OUTER JOIN g4_member_item itemtime on (comment.mb_id = itemtime.mb_id)
+        </if>
+    </select>
+
+    <!-- 게시물의 다음글ID를 반환한다. -->
+    <select id="selectPreviousPostId" parameterType="com.example.api.domain.Post" resultType="int">
+        SELECT MIN(wr_num) AS wr_num FROM g4_write_${boardId} <![CDATA[ where wr_num > ${no} ]]>
+        <if test="boardId == 'qna' or boardId == 'req'">AND mb_id = #{userId}</if>
+    </select>
+    <!-- 게시물의 이전글ID를 반환한다. -->
+    <select id="selectNextPostId" parameterType="com.example.api.domain.Post" resultType="int">
+        SELECT MAX(wr_num) AS wr_num FROM g4_write_${boardId} <![CDATA[ where wr_num < ${no} ]]>
+        <if test="boardId == 'qna' or boardId == 'req'">AND mb_id = #{userId}</if>
+    </select>
+
+    <!-- 가장 최신의 게시글ID를 반환한다. -->
+    <select id="selectLastWriteId" parameterType="com.example.api.domain.Post" resultType="int">
+        SELECT MIN(wr_num) as wr_num FROM g4_write_${boardId}
+    </select>
+
+    <!-- 게시글ID의 PK를 반환한다. -->
+    <select id="selectIdByWriteId" parameterType="com.example.api.domain.Post" resultType="int">
+        select MIN(wr_id) as wr_id from g4_write_${boardId} <![CDATA[ where wr_num <= ${targetWriteId} ]]>
+    </select>
+
+    <!-- 게시물 목록을 조회한다. -->
+    <!-- BoardDAO.getPostList() -->
+    <select id="selectPostList" parameterType="com.example.api.domain.Post" resultMap="postMap">
+        <if test="countable">
+            SELECT COUNT(0) AS total_count FROM g4_write_${boardId} AS post USE KEY(PRIMARY)
+            <if test="containsComments">
+                <include refid="selectPostListWhereContainsComments"/>
+            </if>
+            <if test="!containsComments">
+                <include refid="selectPostListWhere"/>
+            </if>
+        </if>
+        <if test="!countable">
+            SELECT #{boardId} as boardId, article.*
+            -- user association
+            , author.mb_id AS user_id
+            , author.mb_nick AS user_nick
+            , author.today_word AS user_today_word
+            , CASE WHEN admin.authName IS NOT NULL AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_admin
+            , CASE WHEN admin.authName = 'SuperAdmin' AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_super_admin
+            , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'M' THEN 1 ELSE 0 END AS is_user_male
+            , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'F' THEN 1 ELSE 0 END AS is_user_female
+            , CASE WHEN author.mb_released_date IS NOT NULL AND author.mb_released_date <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_prisoner
+            , (SELECT MAX(crime) FROM etc_penalty WHERE mb_id = author.mb_id) AS user_convict_count
+            , IF(author.mb_is_hacking = 'Y',1,0) AS is_user_hacked
+            , CASE WHEN length(author.mb_intercept_date) > 0 AND author.mb_intercept_date <![CDATA[ <= ]]> CURRENT_DATE() THEN 1 ELSE 0 END AS is_user_banned
+            , IF(author.mb_leave_date = '',0,1) AS is_user_canceled
+            , CASE WHEN itemtime.chat_color_red IS NOT NULL AND itemtime.chat_color_red <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_red
+            , CASE WHEN itemtime.chat_color_blue IS NOT NULL AND itemtime.chat_color_blue <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_blue
+            , CASE WHEN itemtime.chat_color_pink IS NOT NULL AND itemtime.chat_color_pink <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_pink
+            , IFNULL(author.mb_point,0) AS user_point
+            , IFNULL(author.mb_exp,0) AS user_exp
+            , IFNULL(author.GP_AMT,0) AS user_gp
+            , author.mb_datetime AS user_registration_datetime
+            , author.mb_online AS user_last_chat_login_datetime
+            , author.profile_image_path As user_profile_image_path
+            FROM (
+            SELECT post.wr_id, post.wr_num, post.ca_name,
+            <if test="hasBest">post.is_best,</if>
+            <if test="hasPhoto">post.is_photo,</if>
+            post.wr_subject, post.wr_comment, post.mb_id AS mb_id, post.wr_name AS wr_name, post.wr_datetime,
+            post.wr_hit,
+            post.wr_good
+            <if test="isPointPost">, post.gift_point, post.status</if>
+            <if test="isProtoPost">, post.bet_strength</if>
+            FROM g4_write_${boardId} AS post USE KEY(PRIMARY)
+            <if test="containsComments">
+                <include refid="selectPostListWhereContainsComments"/>
+            </if>
+            <if test="!containsComments">
+                <include refid="selectPostListWhere"/>
+            </if>
+            ORDER BY
+            <if test="isPointPost">post.status ASC,</if>
+            post.wr_num ASC
+            <if test="limit != null and offset != null">
+                LIMIT #{limit}
+                OFFSET #{offset}
+            </if>
+            ) article
+            LEFT OUTER JOIN g4_member author on (article.mb_id = author.mb_id)
+            LEFT OUTER JOIN manager_group admin on (article.mb_id = admin.mb_id)
+            LEFT OUTER JOIN g4_member_item itemtime on (article.mb_id = itemtime.mb_id)
+        </if>
+    </select>
+
+    <!-- 게시판 단위(자유, 유머, 포토) 베스트 게시물 목록을 조회한다. -->
+    <!-- BoardDAO.getPostList() -->
+    <select id="selectBestPostList" parameterType="com.example.api.domain.Post" resultMap="postMap">
+        <if test="countable">
+            SELECT COUNT(0) AS total_count FROM bbs_best
+            <if test="boardId != null">
+                <where>AND bo_table = #{boardId}</where>
+            </if>
+        </if>
+        <if test="!countable">
+            SELECT #{boardId} as boardId, article.wr_id, article.wr_num, article.ca_name,
+            <if test="hasBest">article.is_best,</if>
+            <if test="hasPhoto">article.is_photo,</if>
+            article.wr_subject, article.wr_comment, article.mb_id AS mb_id, article.wr_name AS wr_name, article.wr_hit, article.wr_good,
+            best.regDateTime AS wr_datetime
+            <if test="isPointPost">, article.gift_point, article.status</if>
+            -- user association
+            , author.mb_id AS user_id
+            , author.mb_nick AS user_nick
+            , author.today_word AS user_today_word
+            , CASE WHEN admin.authName IS NOT NULL AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_admin
+            , CASE WHEN admin.authName = 'SuperAdmin' AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_super_admin
+            , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'M' THEN 1 ELSE 0 END AS is_user_male
+            , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'F' THEN 1 ELSE 0 END AS is_user_female
+            , CASE WHEN author.mb_released_date IS NOT NULL AND author.mb_released_date <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_prisoner
+            , (SELECT MAX(crime) FROM etc_penalty WHERE mb_id = author.mb_id) AS user_convict_count
+            , IF(author.mb_is_hacking = 'Y',1,0) AS is_user_hacked
+            , CASE WHEN length(author.mb_intercept_date) > 0 AND author.mb_intercept_date <![CDATA[ <= ]]> CURRENT_DATE() THEN 1 ELSE 0 END AS is_user_banned
+            , IF(author.mb_leave_date = '',0,1) AS is_user_canceled
+            , CASE WHEN itemtime.chat_color_red IS NOT NULL AND itemtime.chat_color_red <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_red
+            , CASE WHEN itemtime.chat_color_blue IS NOT NULL AND itemtime.chat_color_blue <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_blue
+            , CASE WHEN itemtime.chat_color_pink IS NOT NULL AND itemtime.chat_color_pink <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_pink
+            , IFNULL(author.mb_point,0) AS user_point
+            , IFNULL(author.mb_exp,0) AS user_exp
+            , IFNULL(author.GP_AMT,0) AS user_gp
+            , author.mb_datetime AS user_registration_datetime
+            , author.mb_online AS user_last_chat_login_datetime
+            , author.profile_image_path As user_profile_image_path
+            FROM
+            (
+            SELECT wr_id, regDateTime FROM bbs_best
+            <where>
+                <if test="boardId != null">
+                    AND bo_table = #{boardId}
+                </if>
+                <if test="userId != null">
+                    AND mb_id = #{userId}
+                </if>
+            </where>
+            ORDER BY articleId DESC
+            <if test="limit != null and offset != null">
+                LIMIT #{limit}
+                OFFSET #{offset}
+            </if>
+            ) best
+            INNER JOIN g4_write_${boardId} article on (best.wr_id = article.wr_id)
+            LEFT OUTER JOIN g4_member author on (article.mb_id = author.mb_id)
+            LEFT OUTER JOIN manager_group admin on (article.mb_id = admin.mb_id)
+            LEFT OUTER JOIN g4_member_item itemtime on (article.mb_id = itemtime.mb_id)
+        </if>
+    </select>
+
+    <!-- 전체 베스트 게시물 목록을 조회한다. -->
+    <!-- BoardDAO.getPostList() -->
+    <select id="selectAllCategoriesBestPostList" parameterType="com.example.api.domain.Post" resultMap="postMap">
+        <if test="countable">
+            SELECT COUNT(0) AS total_count FROM bbs_best
+        </if>
+        <if test="!countable">
+            SELECT 'best' as boardId, best.bo_table AS ca_name, best.wr_id, best.regDateTime AS wr_datetime, best.mb_id AS mb_id
+            -- user association
+            , author.mb_id AS user_id
+            , author.mb_nick AS user_nick
+            , author.today_word AS user_today_word
+            , CASE WHEN admin.authName IS NOT NULL AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_admin
+            , CASE WHEN admin.authName = 'SuperAdmin' AND author.mb_level = 10 THEN 1 ELSE 0 END AS is_user_super_admin
+            , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'M' THEN 1 ELSE 0 END AS is_user_male
+            , CASE WHEN author.mb_sex IS NOT NULL AND author.mb_sex = 'F' THEN 1 ELSE 0 END AS is_user_female
+            , CASE WHEN author.mb_released_date IS NOT NULL AND author.mb_released_date <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_prisoner
+            , (SELECT MAX(crime) FROM etc_penalty WHERE mb_id = author.mb_id) AS user_convict_count
+            , IF(author.mb_is_hacking = 'Y',1,0) AS is_user_hacked
+            , CASE WHEN length(author.mb_intercept_date) > 0 AND author.mb_intercept_date <![CDATA[ <= ]]> CURRENT_DATE() THEN 1 ELSE 0 END AS is_user_banned
+            , IF(author.mb_leave_date = '',0,1) AS is_user_canceled
+            , CASE WHEN itemtime.chat_color_red IS NOT NULL AND itemtime.chat_color_red <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_red
+            , CASE WHEN itemtime.chat_color_blue IS NOT NULL AND itemtime.chat_color_blue <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_blue
+            , CASE WHEN itemtime.chat_color_pink IS NOT NULL AND itemtime.chat_color_pink <![CDATA[ > ]]> NOW() THEN 1 ELSE 0 END AS is_user_nick_pink
+            , IFNULL(author.mb_point,0) AS user_point
+            , IFNULL(author.mb_exp,0) AS user_exp
+            , IFNULL(author.GP_AMT,0) AS user_gp
+            , author.mb_datetime AS user_registration_datetime
+            , author.mb_online AS user_last_chat_login_datetime
+            FROM (
+            SELECT bo_table, wr_id, mb_id, regDateTime
+            FROM bbs_best
+            ORDER BY articleId DESC
+            <if test="limit != null and offset != null">
+                LIMIT #{limit}
+                OFFSET #{offset}
+            </if>
+            ) best
+            LEFT OUTER JOIN g4_member author ON (best.mb_id = author.mb_id)
+            LEFT OUTER JOIN manager_group admin ON (best.mb_id = admin.mb_id)
+            LEFT OUTER JOIN g4_member_item itemtime ON (best.mb_id = itemtime.mb_id)
+        </if>
+    </select>
+
+
+    <select id="selectAllCategoriesBestPost" parameterType="com.example.api.domain.Post" resultMap="postMap">
+        SELECT wr_id, wr_num, is_photo, is_best, wr_subject, wr_comment, mb_id, wr_name, wr_hit, wr_good
+        FROM g4_write_${category}
+        WHERE wr_id = ${id}
+    </select>
+
+
+    <!-- 게시물의 조회수를 1 증가 또는 감소시킨다. -->
+    <!-- BoardDAO.updatePostHitCount() -->
+    <update id="updatePostHitCount" parameterType="com.example.api.domain.Post">
+        UPDATE g4_write_${boardId}
+        SET
+        wr_hit = wr_hit + 1
+        WHERE wr_id = #{id}
+    </update>
+
 </mapper>

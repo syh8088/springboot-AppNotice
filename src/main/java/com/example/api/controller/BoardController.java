@@ -59,10 +59,6 @@ public class BoardController {
         PostAndCommentList postAndCommentList = boardService.getPostAndCommentList(boardId, postId, commentPageSize);
 
         return new ResponseEntity<>(postAndCommentList, HttpStatus.OK);
-
-
-
-
     }
 
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
  * @author
  */
 
+/*
 @Repository
 @NoArgsConstructor
 @Slf4j(topic = 'json.dao')
@@ -22,13 +23,16 @@ public class UserDAO {
     @Autowired
     private UserGradePolicy userGradePolicy;
 
-    /**
+    */
+/**
      * 회원 계급을 계산하여 반환한다.
      *
      * @param userId 회원 ID
      * @param exp    회원 보유 경험치
      * @param point  회원 보유 포인트
      * @return 계산된 회원 계급 오브젝트
-     */
+     *//*
+
 
 }
+*/

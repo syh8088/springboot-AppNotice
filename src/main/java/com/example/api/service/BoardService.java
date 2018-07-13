@@ -75,6 +75,8 @@ public class BoardService {
         params.setPageSize(commentPageSize);
 
         Integer id = boardDAO.getParentPostIdByTargetId(params);
+        if (id == null)
+            throw new NamedException("NotExistPostIdError", "존재하지 않은 게시글 번호입니다.");
 
         // postId가 commnentID로 들어왔을 경우 parentID를 반환한다. PC/Mobile 불일치문제
         params.setId(boardDAO.getParentPostIdByTargetId(params));

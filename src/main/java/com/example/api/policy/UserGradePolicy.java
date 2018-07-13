@@ -18,10 +18,10 @@ public class UserGradePolicy {
     /**
      * 인원수 제한 없는 회원 계급 목록을 반환한다.
      */
-    public List<UserGrade> createUnlimitedUserGradeList() {
+/*    public List<UserGrade> createUnlimitedUserGradeList() {
 
         return unlimitedUserGradeListAfter5219();
-    }
+    }*/
 
     /**
      *  사이트의 5219 정책 적용 후 인원수 제한 없는 회원 계급 목록을 반환한다.
@@ -30,7 +30,7 @@ public class UserGradePolicy {
      *
      * @return 인원수 제한 없는 회원 계급 목록
      */
-    private List<UserGrade> unlimitedUserGradeListAfter5219() {
+/*    private List<UserGrade> unlimitedUserGradeListAfter5219() {
 
         return new LinkedList<UserGrade>(Arrays.asList(
 
@@ -49,7 +49,7 @@ public class UserGradePolicy {
                 UserGrade.builder().userGrade(12).description("대위").requiredExp(3040000L).requiredPoint(0L).maxBlackList(260).maxDailySendMessageCount(20).maleImageUrl(namedDataRootUrl + gradePath + "/m12.png").femaleImageUrl(namedDataRootUrl + gradePath + "/f12.png").build(),
                 UserGrade.builder().userGrade(13).description("소령(진)").requiredExp(3420000L).requiredPoint(0L).maxBlackList(310).maxDailySendMessageCount(21).maleImageUrl(namedDataRootUrl + gradePath + "/m13.png").femaleImageUrl(namedDataRootUrl + gradePath + "/f13.png").build()
         ));
-    }
+    }*/
 
 
 

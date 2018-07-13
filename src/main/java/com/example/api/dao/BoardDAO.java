@@ -24,8 +24,8 @@ public class BoardDAO {
     private static final int DEFAULT_POST_SCAN_RANGE = 10000;
     private static final String DOMAIN = "board.";
 
-    @Autowired
-    private UserDAO userDAO;
+    //@Autowired
+    //private UserDAO userDAO;
 
     @Autowired
     @Qualifier("sessionNDB")

@@ -56,9 +56,9 @@ public class PostList {
     private List<Post> mainPostList;
 
     // 방채팅 1위 정보
-    @Getter
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ChatRoom topChatRoom;
+    //@Getter
+    //@JsonInclude(JsonInclude.Include.NON_NULL)
+    //private ChatRoom topChatRoom;
 
     public PostList(int pageNo, int ps, int totalNoticeCount, int totalPostCount, List<Post> noticeList, List<Post> postList, List<Post> mainPostList) {
         this.pageNo = pageNo;

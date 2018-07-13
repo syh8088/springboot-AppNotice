@@ -1,5 +1,7 @@
 package com.example.api.controller;
 
+import com.example.api.domain.PostAndCommentList;
+import com.example.api.domain.SessionStorage;
 import com.example.api.entities.AppNotice;
 import com.example.api.entities.AppNoticeDevice;
 import com.example.api.service.BoardService;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BoardController {
+
+    @Autowired
+    private SessionStorage storage;
 
     @Autowired
     private BoardService boardService;
@@ -51,7 +56,9 @@ public class BoardController {
         BoardValidator.validateBoardIdNotEmpty(boardId);
         BoardValidator.validatePostIdNotEmpty(postId);
 
+        PostAndCommentList postAndCommentList = boardService.getPostAndCommentList(boardId, postId, commentPageSize);
 
+        return new ResponseEntity<>(postAndCommentList, HttpStatus.OK);
 
 
 

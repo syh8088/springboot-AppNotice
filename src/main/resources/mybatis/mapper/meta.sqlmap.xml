@@ -84,7 +84,7 @@
         <result property="mainPostListString" column="bo_main_post"/>
     </resultMap>
 
-    <select id="selectBoardMetaList" parameterType="com.named.api.domain.BoardMeta" resultMap="boardMetaMap">
+    <select id="selectBoardMetaList" parameterType="com.example.api.domain.BoardMeta" resultMap="boardMetaMap">
         SELECT bo_table, gr_id, bo_subject, bo_short, bo_admin, bo_list_level, bo_read_level, bo_write_level,
         bo_reply_level, bo_comment_level, bo_upload_level, bo_trackback_level, bo_count_delete, bo_count_modify,
         bo_read_point, bo_write_point, bo_write_exp, bo_comment_point, bo_comment2_point, bo_recommend_point, bo_use_category,

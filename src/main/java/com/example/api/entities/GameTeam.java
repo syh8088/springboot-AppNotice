@@ -34,10 +34,10 @@ public class GameTeam {
     @Column(name="create_datetime", updatable=false)
     private LocalDateTime createDatetime;
 
-    @PrePersist
+   /* @PrePersist
     private void prePersist() {
         this.setCreateDatetime(LocalDateTime.now());
-    }
+    }*/
 
     @Override
     public String toString() {

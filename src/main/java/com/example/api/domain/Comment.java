@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 @JsonPropertyOrder(value = {"id", "postId", "groupId", "depth", "depth1st", "depth2nd", "depth3rd", "category", "content", "selected", "selectedPoint", "createdDateTime", "updatedDateTime", "userId", "hasProfileImage", "userProfileImageUrl", "userGrade", "userGradeDescription", "userMale", "userFemale", "userPrisoner", "userHacked", "userBanned", "userNick", "ipAddress", "device"})
 public class Comment extends Paginator {
 
+    // NOTE Getter 를 따로따로 준 이유는 무엇일까요?
+    // NOTE Integer vs int
+
     // 댓글 ID (wr_id)
     @Getter
     private Integer id;

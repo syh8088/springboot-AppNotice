@@ -13,6 +13,7 @@ public class MyBatisConfig {
 
     protected void configureSqlSessionFactory(SqlSessionFactoryBean sqlSessionFactoryBean, DataSource dataSource, ApplicationContext applicationContext) throws IOException {
 
+        // FIXME applicationContext.getResources(MAPPERS_CLASSPATH)의 IOException은 누구의 책임일까요?
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setConfigLocation(applicationContext.getResource(CONFIG_CLASSPATH));
         sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources(MAPPERS_CLASSPATH));

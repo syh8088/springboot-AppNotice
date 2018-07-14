@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 @Configuration
 public class NdbDataBaseConfig extends MyBatisConfig {
 
+    // FIXME SqlSessionTemplate 을 얻기 위해...
+
     /**
      * HikariConfig Bean
      *
@@ -58,6 +60,7 @@ public class NdbDataBaseConfig extends MyBatisConfig {
     @Bean(name = "sfNDB")
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dsNDB") DataSource dataSource, ApplicationContext applicationContext) throws Exception {
 
+        // FIXME throws Exception ...
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         configureSqlSessionFactory(sqlSessionFactoryBean, dataSource, applicationContext);
         return sqlSessionFactoryBean.getObject();

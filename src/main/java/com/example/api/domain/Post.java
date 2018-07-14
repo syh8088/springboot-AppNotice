@@ -18,6 +18,9 @@ import org.springframework.util.StringUtils;
 @JsonIgnoreProperties(value = {"idInArray", "idNotInArray", "pointPost", "protoPost", "bestBoard"}, ignoreUnknown = true)
 @JsonPropertyOrder(value = {"id", "notice", "commentable", "photo", "new", "best", "point", "pointClosed", "totalSelectedCommentCount", "totalSelectedPoint", "thumbnailUrl", "thumbnailPath", "category", "title", "commentCount", "content", "createdDateTime", "bestDateTime", "hitCount", "likeCount", "hitPopular", "likePopular", "betStrength", "protoRegistered", "userNick", "user"})
 public class Post extends Paginator {
+
+    // NOTE @JSON* 를 봐선 view로 리턴되는 객체인 것 같은데... BeanUtils 참고
+
     /**
      * 게시판 카테고리를 정의한다. (post.boardId)
      */

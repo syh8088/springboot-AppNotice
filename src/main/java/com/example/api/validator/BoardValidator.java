@@ -7,8 +7,11 @@ import org.springframework.util.StringUtils;
 
 public class BoardValidator {
 
-    public static void validateBoardIdNotEmpty(String boardId) throws NamedException {
+    // NOTE 흠...
+
+    public static void validateBoardIdNotEmpty(String boardId) {
         if(StringUtils.isEmpty(boardId)){
+            // FIXME msg 문구는 Spring messageSources 사용
             throw new NamedException("BoardIdParameterMissingError", "boardId는 필수 파라메터입니다.");
         }
     }

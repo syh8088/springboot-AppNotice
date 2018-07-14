@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ import java.util.List;
 @Repository
 @NoArgsConstructor
 @Slf4j
-public class BoardDAO {
+public class BoardDAO { // FIXME DAO 가 너무 많은 일은 하고 있습니다.
     private static final int DEFAULT_POST_SCAN_RANGE = 10000;
     private static final String DOMAIN = "board.";
 

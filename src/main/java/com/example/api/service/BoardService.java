@@ -69,6 +69,8 @@ public class BoardService {
      * @return 댓글이 포함된 게시물 정보
      */
     public PostAndCommentList getPostAndCommentList(String boardId, int postId, Integer commentPageSize) throws NamedException {
+
+
         Post params = new Post();
         params.setBoardId(boardId);
         params.setId(postId);

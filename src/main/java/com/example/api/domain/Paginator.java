@@ -12,6 +12,7 @@ import lombok.ToString;
 @ToString
 public class Paginator {
 
+    // NOTE Pageable
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer pageNo;

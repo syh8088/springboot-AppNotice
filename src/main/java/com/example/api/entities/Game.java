@@ -64,6 +64,7 @@ public class Game {
 
     private int infozoneNewsCount;
 
+    // FIXME N+1 이슈 LAZY + queryDSL fetchJoin
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "game", fetch = FetchType.EAGER)
     private List<GameTeam> gameTeams;
 

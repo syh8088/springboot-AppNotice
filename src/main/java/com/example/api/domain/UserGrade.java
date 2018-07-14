@@ -8,7 +8,7 @@ import lombok.Data;
  *
  * @author
  */
-@Data
+@Data // FIXME @DATA 는 사용을 지양합니다.
 @Builder
 public class UserGrade {
 
@@ -18,11 +18,11 @@ public class UserGrade {
     // 설명
     private String description;
 
-    // 최소 요구 경험치
-    private Long requiredExp;
-
     // 최소 요구 포인트
     private Long requiredPoint;
+
+    // 최소 요구 경험치
+    private Long requiredExp;
 
     // 인원수 제한
     private Integer limitedUserCount;

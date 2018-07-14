@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class GameBaseDto<T> {
+    // FIXME 제네릭이 아닌 인터페이스를 사용하는 것이 좋을 것 같아요.
     private long id;
     private String displayTime;
     private int period;

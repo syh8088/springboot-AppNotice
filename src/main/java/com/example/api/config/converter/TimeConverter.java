@@ -19,8 +19,8 @@ public class TimeConverter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d H:m:s");
         LocalDate nowDate = LocalDate.now();
         String dateTimeString = nowDate.toString() + " " + "00:00:00";
-        LocalDateTime nowStartdateTime = LocalDateTime.parse(dateTimeString, formatter);
-        return nowStartdateTime;
+        //
+        return LocalDateTime.parse(dateTimeString, formatter);
     }
 
     /*

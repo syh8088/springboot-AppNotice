@@ -5,9 +5,9 @@ import lombok.Getter;
 import java.util.HashMap;
 
 @Getter
-public class NamedException extends Exception {
+public class NamedException extends RuntimeException { // FIXME Name과 관련된 예외는 RuntimeException 이 더 적합합니다.
 
-    private final String code;
+    private final String code; // FIXME Code도 Enum으로 관리하면 더 좋을 것 같네요
     private final HashMap data;
 
     /**
